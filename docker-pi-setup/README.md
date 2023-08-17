@@ -1,6 +1,6 @@
 # Docker Pi Setup Playbook
 
-This playbook contains 2 roles to setup a Raspberry Pi Docker Container host running Ubuntu Server 23.04 Arm! Here is a breadown in sequential order:
+This playbook contains 4 roles to set up a Raspberry Pi Docker Container host running Ubuntu Server 23.04 Arm! Here is a breakdown in sequential order:
 
 - Update server
 - Install essential packages
@@ -16,7 +16,7 @@ This playbook contains 2 roles to setup a Raspberry Pi Docker Container host run
 ## Pre-requisite Steps
 
 - Install Ubuntu 23.04 Arm on your Raspberry Pi (I am using a Pi 4b+)
-- Setup a satic ip
+- Setup a static ip
 - Copy your SSH key to the server
 
 ## Playbook usage
@@ -31,7 +31,7 @@ cd docker-pi-setup
 
 Before using the playbook you will likely want to update the [hosts file](./hosts) for your target server.
 
-I have also included defaults where necessary to allow the playbook to be used without my vault. You will want to update them for the [system role](./roles/system/defaults/main.yml) the [services role](./roles/services/defaults/main.yml).
+I have also included defaults where necessary to allow the playbook to be used without my vault. You will want to update them for the [system role](./roles/system/defaults/main.yml) and the [services role](./roles/services/defaults/main.yml).
 
 Optionally you can also replace the vault file with your own with: `ansible-vault create group_vars/all/secret.yml `
 
@@ -57,5 +57,5 @@ traefik_uptime_kuma_domain: status.example.com
 
 wireguard_webpassword: changeme
 public_ip: 1.2.3.4
-traefik_wireguard_domain: wireguard.example.clom
+traefik_wireguard_domain: wireguard.example.com
 ```
