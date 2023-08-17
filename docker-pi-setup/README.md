@@ -1,6 +1,6 @@
 # Docker Pi Setup Playbook
 
-This playbook contains 4 roles to set up a Raspberry Pi Docker Container host running Ubuntu Server 23.04 Arm! Here is a breakdown in sequential order:
+This playbook uses 4 roles to set up a Raspberry Pi Docker Container host running Ubuntu Server 23.04 Arm! Here is a breakdown in sequential order:
 
 - Update server
 - Install essential packages
