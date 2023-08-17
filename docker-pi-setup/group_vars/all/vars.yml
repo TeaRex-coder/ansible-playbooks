@@ -1,0 +1,8 @@
+---
+packages:
+  - vim
+  - speedtest-cli
+  - zsh
+
+username: alex
+shell: /bin/zsh

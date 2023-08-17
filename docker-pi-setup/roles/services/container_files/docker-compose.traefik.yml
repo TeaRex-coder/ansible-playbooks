@@ -1,0 +1,36 @@
+---
+version: "3.3"
+
+volumes:
+  traefik-ssl-certs:
+    driver: local
+
+services:
+  traefik:
+    image: traefik:v2.10
+    container_name: traefik
+    ports:
+      - 80:80
+      - 443:443
+      - 8080:8080 # (optional) expose the dashboard !don't use in production!
+    environment:
+      - CF_API_EMAIL=$(CF_API_EMAIL)
+      - CF_API_KEY=$(CF_API_KEY)
+    volumes:
+      - /home/alex/containers/traefik/config:/etc/traefik
+      - traefik-ssl-certs:/ssl-certs
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefikDashboard.rule=Host(`$(TRAEFIK_TRAEFIK_DASHBOARD_DOMAIN)`)"
+      - "traefik.http.services.traefikDashboard.loadbalancer.server.port=8080"
+      - "traefik.http.routers.traefikDashboard.entrypoints=web, websecure"
+      - "traefik.http.routers.traefikDashboard.tls=true"
+      - "traefik.http.routers.traefikDashboard.tls.certresolver=production"
+      - "traefik.http.routers.traefikDashboard.tls.domains[0].main=$(TRAEFIK_TRAEFIK_DASHBOARD_DOMAIN)"
+    networks:
+      - services
+    restart: unless-stopped
+
+networks:
+  services:

@@ -1,0 +1,89 @@
+---
+- name: Create /home/{{ username }}/containers directory
+  file:
+    path: "/home/{{ username }}/containers"
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: "0755"
+
+- name: Create sub-directories for each container
+  file:
+    path: "/home/{{ username }}/containers/{{ item }}"
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: "0755"
+  loop: "{{ containers }}"
+
+- name: Create Traefik config directory
+  file:
+    path: "/home/{{ username }}/containers/traefik/config"
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: "0755"
+  when: "'traefik' in containers"
+
+- name: Rename and upload the Docker Compose files to the directories
+  template:
+    src: "./container_files/docker-compose.{{ item }}.yml"
+    dest: "/home/{{ username }}/containers/{{ item }}/docker-compose.yml"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: "0644"
+  loop: "{{ containers }}"
+
+- name: Upload config.json for Cloudflare DDNS
+  template:
+    src: "./container_files/config.json_cloudflare-ddns.j2"
+    dest: "/home/{{ username }}/containers/cloudflare-ddns/config.json"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: "0644"
+  when: "'cloudflare-ddns' in containers"
+
+- name: Upload Pi-Hole Secrets
+  template:
+    src: "./container_files/.env_pihole.j2"
+    dest: "/home/{{ username }}/containers/pi-hole/.env"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: "0644"
+  when: "'pi-hole' in containers"
+
+- name: Upload Traefik Secrets
+  template:
+    src: "./container_files/.env_traefik.j2"
+    dest: "/home/{{ username }}/containers/traefik/.env"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: "0644"
+  when: "'traefik' in containers"
+
+- name: Upload Traefik Config
+  template:
+    src: "./container_files/traefik_config.yml.j2"
+    dest: "/home/{{ username }}/containers/traefik/config/traefik.yml"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: "0644"
+  when: "'traefik' in containers"
+
+- name: Upload Uptime Kuma Secrets
+  template:
+    src: "./container_files/.env_uptime-kuma.j2"
+    dest: "/home/{{ username }}/containers/uptime-kuma/.env"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: "0644"
+  when: "'uptime-kuma' in containers"
+
+- name: Upload Wireguard Secrets
+  template:
+    src: "./container_files/.env_wireguard.j2"
+    dest: "/home/{{ username }}/containers/wireguard/.env"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: "0644"
+  when: "'wireguard' in containers"

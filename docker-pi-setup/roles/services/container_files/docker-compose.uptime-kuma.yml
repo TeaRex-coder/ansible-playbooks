@@ -1,0 +1,25 @@
+---
+version: "3.3"
+
+services:
+  uptime-kuma:
+    image: louislam/uptime-kuma:latest
+    container_name: uptime-kuma
+    networks:
+      - services
+    volumes:
+      - ./uptime-kuma-data:/app/data
+    ports:
+      - 3001
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.uptimeKuma.rule=Host(`$(TRAEFIK_UPTIME_KUMA_DOMAIN)`)"
+      - "traefik.http.routers.uptimeKuma.entrypoints=web, websecure"
+      - "traefik.http.routers.uptimeKuma.tls=true"
+      - "traefik.http.routers.uptimeKuma.tls.certresolver=production"
+      - "traefik.http.routers.uptimeKuma.tls.domains[0].main=$(TRAEFIK_UPTIME_KUMA_DOMAIN)"
+    restart: unless-stopped
+
+networks:
+  services:
+    external: true

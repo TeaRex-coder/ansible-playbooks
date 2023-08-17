@@ -1,0 +1,58 @@
+global:
+  checkNewVersion: true
+  sendAnonymousUsage: false  # true by default
+
+# (Optional) Enable API and Dashboard
+api:
+  dashboard: true  # true by default
+  insecure: true  # Don't do this in production!
+
+# Entry Points configuration
+entryPoints:
+  web:
+    address: :80
+    # (Optional) Redirect to HTTPS
+    # ---
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+
+  websecure:
+    address: :443
+
+serversTransport:
+  insecureSkipVerify: true
+
+# Configure your CertificateResolver here...
+certificatesResolvers:
+  staging:
+    acme:
+      email: {{ traefik_certificate_email }}
+      storage: /etc/traefik/certs/acme.json
+      caServer: "https://acme-staging-v02.api.letsencrypt.org/directory"
+      dnsChallenge:
+        provider: cloudflare
+        resolvers:
+          - "1.1.1.1:53"
+          - "1.0.0.1:53"
+
+  production:
+    acme:
+      email: {{ traefik_certificate_email }}
+      storage: /etc/traefik/certs/acme.json
+      caServer: "https://acme-v02.api.letsencrypt.org/directory"
+      dnsChallenge:
+        provider: cloudflare
+        resolvers:
+          - "1.1.1.1:53"
+          - "1.0.0.1:53"
+
+providers:
+  docker:
+    exposedByDefault: false  # Default is true
+  file:
+    # watch for dynamic configuration changes
+    directory: /etc/traefik
+    watch: true

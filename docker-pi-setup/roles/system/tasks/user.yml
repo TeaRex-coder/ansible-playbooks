@@ -1,0 +1,51 @@
+- name: Ensure all necessary groups are created
+  group:
+    name: "{{ item }}"
+  loop:
+    - docker
+    - "{{ username }}"
+
+- name: Ensure the non-root user is created
+  user:
+    name: "{{ username }}"
+    password: "{{ password | password_hash('sha512') }}"
+    groups:
+      - sudo
+      - docker
+      - users
+    append: yes
+    shell: "{{ shell }}"
+    update_password: on_create
+
+- name: Enable passwordless sudo for "{{ username }}"
+  lineinfile:
+    dest: /etc/sudoers
+    regexp: "^%wheel"
+    line: "{{ username }} ALL=(ALL) NOPASSWD: ALL"
+    validate: "/usr/sbin/visudo -cf %s"
+
+- name: Install Oh My Zsh
+  shell: |
+    RUNZSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  args:
+    creates: "~/.oh-my-zsh"
+  become_user: "{{ username }}"
+  environment:
+    ZSH: "/home/{{ username }}/.oh-my-zsh"
+
+- name: Set ZSH_THEME to tjkirch
+  lineinfile:
+    path: "/home/{{ username }}/.zshrc"
+    regexp: '^ZSH_THEME=".*"$'
+    line: 'ZSH_THEME="tjkirch"'
+    state: present
+
+- name: Suppress login message (hushlogin)
+  file:
+    path: "/home/{{ username }}/.hushlogin"
+    mode: 0644
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    modification_time: preserve
+    access_time: preserve
+    state: touch

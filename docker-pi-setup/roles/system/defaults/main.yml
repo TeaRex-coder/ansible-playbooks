@@ -1,0 +1,10 @@
+---
+packages:
+  - vim
+
+security_ssh_config_path: /etc/ssh/sshd_config
+ssh_port: 22
+
+username: alex
+password: changeme
+shell: /bin/bash

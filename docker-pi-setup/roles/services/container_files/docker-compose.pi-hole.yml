@@ -1,0 +1,40 @@
+---
+version: "3.0"
+
+volumes:
+  etc_pihole-unbound:
+  etc_pihole_dnsmasq-unbound:
+
+services:
+  pihole:
+    container_name: pihole
+    image: cbcrowe/pihole-unbound:latest
+    hostname: pi-hole_unbound
+    networks:
+      - services
+    ports:
+      - 53:53/tcp
+      - 53:53/udp
+      - 80/tcp
+    environment:
+      - TZ=${TZ:-UTC}
+      - WEBPASSWORD=${PIHOLE_WEBPASSWORD}
+      - PIHOLE_DNS_=127.0.0.1#5335
+      - DNSSEC="true"
+      - DNSMASQ_LISTENING=single
+    volumes:
+      - etc_pihole-unbound:/etc/pihole:rw
+      - etc_pihole_dnsmasq-unbound:/etc/dnsmasq.d:rw
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.pihole.rule=Host(`$(TRAEFIK_PIHOLE_DOMAIN)`)"
+      - "traefik.http.services.pihole.loadbalancer.server.port=80"
+      - "traefik.http.routers.pihole.entrypoints=web, websecure"
+      - "traefik.http.routers.pihole.tls=true"
+      - "traefik.http.routers.pihole.tls.certresolver=production"
+      - "traefik.http.routers.pihole.tls.domains[0].main=$(TRAEFIK_PIHOLE_DOMAIN)"
+    restart: unless-stopped
+
+networks:
+  services:
+    external: true

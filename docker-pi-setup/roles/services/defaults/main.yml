@@ -1,0 +1,28 @@
+---
+username: alex
+
+containers:
+  - cloudflare-ddns
+  - pi-hole
+  - traefik
+  - uptime-kuma
+  - watchtower
+  - wireguard
+
+cloudflare_ddns_api_key: api_key
+ddns_domain: ddns.example.com
+cloudflare_domain_zone_id: zone_id
+
+pihole_webpassword: changeme
+traefik_pihole_domain: pihole.example.com
+
+cf_api_email: name@example.com
+cf_traefik_api_key: api_key
+traefik_traefik_dashboard_domain: traefik.example.com
+traefik_certificate_email: name@example.com
+
+traefik_uptime_kuma_domain: status.example.com
+
+wireguard_webpassword: changeme
+public_ip: 1.2.3.4
+traefik_wireguard_domain: wireguard.example.com
