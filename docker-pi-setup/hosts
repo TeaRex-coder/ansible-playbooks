@@ -1,2 +1,2 @@
 [pi]
-docker-pi ansible_host=192.168.65.14 ansible_user=alex ansible_connection=ssh ansible_ssh_private_key_file=/Users/alexandre/.ssh/id_rsa
+docker-pi ansible_host=docker ansible_user=alex ansible_connection=ssh ansible_ssh_private_key_file=/Users/alexandre/.ssh/id_rsa
